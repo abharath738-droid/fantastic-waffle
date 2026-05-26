@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gaming Stackly Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --panel: #12121e;
+      --panel-2: #0f0f1a;
+      --line: rgba(255,255,255,.08);
+      --muted: rgba(255,255,255,.48);
+      --soft: rgba(255,255,255,.06);
+      --red: #e50914;
+      --violet: #a855f7;
+      --gold: #f59e0b;
+      --green: #22c55e;
+      --cyan: #06b6d4;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Rajdhani, system-ui, sans-serif;
+      background: var(--bg);
+      color: #f5f5fb;
+      overflow-x: hidden;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .app { min-height: 100vh; display: grid; grid-template-columns: 260px minmax(0, 1fr); background: #0b0c10; }
+    .sidebar { background: var(--panel-2); border-right: 1px solid var(--line); min-height: 100vh; display: flex; flex-direction: column; position: sticky; top: 0; }
+    .brand { height: 80px; display: flex; align-items: center; gap: 12px; padding: 0 22px; border-bottom: 1px solid var(--line); }
+    .logo { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-family: Orbitron; font-weight: 900; background: linear-gradient(135deg, var(--red), #b01010); box-shadow: 0 0 22px rgba(229,9,20,.3); }
+    .brand-name { font-family: Orbitron; font-weight: 800; line-height: 1.05; }
+    .brand-name span { color: var(--red); }
+    .profile { display: flex; align-items: center; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+    .avatar { width: 42px; height: 42px; border-radius: 999px; display: grid; place-items: center; font-family: Orbitron; font-weight: 900; background: linear-gradient(135deg, var(--red), var(--violet)); }
+    .profile small, .nav-title, .muted { color: var(--muted); }
+    .profile strong { display: block; }
+    .nav { padding: 18px 12px; display: grid; gap: 6px; flex: 1; }
+    .nav-title { padding: 0 12px 8px; font-family: Orbitron; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; }
+    .nav button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 12px; color: rgba(255,255,255,.55); background: transparent; border: 0; border-left: 3px solid transparent; border-radius: 12px; text-align: left; font-weight: 700; }
+    .nav button.active { color: #fff; border-left-color: var(--red); background: linear-gradient(90deg, rgba(229,9,20,.16), transparent); }
+    .nav i { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--soft); font-style: normal; }
+    .logout { margin: 16px 18px 20px; border: 1px solid var(--line); background: var(--soft); color: rgba(255,255,255,.58); border-radius: 12px; padding: 10px 12px; font-weight: 700; }
+
+    .main { min-width: 0; display: flex; flex-direction: column; }
+    .topbar { height: 64px; position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 14px; padding: 0 22px; background: rgba(15,15,26,.96); border-bottom: 1px solid var(--line); }
+    .menu { display: none; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: #fff; }
+    .title { font-family: Orbitron; font-size: 14px; font-weight: 800; }
+    .search { max-width: 340px; flex: 1; display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); margin-left: 12px; }
+    .search input { width: 100%; background: transparent; border: 0; outline: 0; color: white; }
+    .pill { margin-left: auto; color: var(--red); font-family: Orbitron; font-size: 11px; letter-spacing: .16em; font-weight: 800; }
+    .icon-btn { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: rgba(255,255,255,.65); }
+
+    .content { width: min(1600px, 100%); margin: 0 auto; padding: 24px; display: grid; gap: 22px; }
+    .hero, .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+    .hero { position: relative; overflow: hidden; padding: 24px; display: flex; justify-content: space-between; gap: 20px; align-items: center; background: linear-gradient(120deg, rgba(229,9,20,.14), rgba(168,85,247,.07) 55%, rgba(6,182,212,.04)); }
+    .hero h1 { margin: 0 0 6px; font: 900 24px Orbitron; }
+    .hero h1 span { color: var(--red); }
+    .hero p { margin: 0; color: var(--muted); font-weight: 700; }
+    .role-switch { display: flex; gap: 8px; flex-wrap: wrap; }
+    .role-switch button { border: 1px solid var(--line); background: rgba(255,255,255,.05); color: rgba(255,255,255,.65); border-radius: 10px; padding: 9px 13px; font-family: Orbitron; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .role-switch button.active { color: white; border-color: rgba(229,9,20,.4); background: linear-gradient(135deg, var(--red), #b01010); box-shadow: 0 0 18px rgba(229,9,20,.28); }
+
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .stat { padding: 18px; display: grid; gap: 14px; }
+    .stat-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, var(--red), #b01010); font-size: 20px; }
+    .change { font-family: Orbitron; font-size: 11px; font-weight: 800; padding: 5px 8px; border-radius: 7px; color: var(--green); background: rgba(34,197,94,.14); }
+    .stat-value { font: 900 28px Orbitron; line-height: 1; }
+    .stat-label { color: var(--muted); font-weight: 700; }
+
+    .grid { display: grid; grid-template-columns: 390px minmax(0, 1fr); gap: 18px; }
+    .card-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .card-head h2 { display: flex; align-items: center; gap: 8px; margin: 0; font: 800 13px Orbitron; letter-spacing: .08em; }
+    .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--red); box-shadow: 0 0 8px var(--red); }
+    .card-head button { color: var(--red); border: 0; background: transparent; font-weight: 800; }
+    .list { padding: 14px; display: grid; gap: 12px; }
+    .item { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px; border: 1px solid rgba(255,255,255,.06); border-radius: 8px; background: rgba(255,255,255,.035); }
+    .item-icon { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: rgba(255,255,255,.07); font-size: 20px; }
+    .item strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item small { color: var(--muted); font-weight: 700; }
+    .badge { font-family: Orbitron; font-size: 10px; font-weight: 900; padding: 6px 8px; border-radius: 7px; color: var(--green); background: rgba(34,197,94,.14); white-space: nowrap; }
+    .badge.live { color: var(--red); background: rgba(229,9,20,.16); }
+    .badge.warn { color: var(--gold); background: rgba(245,158,11,.15); }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; min-width: 600px; border-collapse: collapse; }
+    th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.055); }
+    th { color: rgba(255,255,255,.34); font: 800 10px Orbitron; letter-spacing: .18em; text-transform: uppercase; }
+    td { font-weight: 700; }
+    .achievements { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; padding: 14px; }
+    .achievement { min-height: 88px; display: grid; place-items: center; text-align: center; gap: 4px; border: 1px solid rgba(255,255,255,.06); border-radius: 8px; background: rgba(255,255,255,.035); }
+    .achievement i { font-style: normal; font-size: 24px; color: var(--gold); }
+    .achievement strong { font-size: 12px; color: rgba(255,255,255,.78); }
+
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: fixed; inset: 0 auto 0 0; width: 260px; transform: translateX(-100%); transition: transform .2s; z-index: 5; }
+      .sidebar.open { transform: translateX(0); }
+      .menu { display: inline-grid; place-items: center; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid { grid-template-columns: 1fr; }
+      .hero { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 620px) {
+      .content { padding: 16px; }
+      .topbar { padding: 0 14px; }
+      .search, .pill { display: none; }
+      .stats { grid-template-columns: 1fr; }
+      .achievements { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="logo">GS</div><div class="brand-name">Gaming<br><span>Stackly</span></div></div>
+      <div class="profile"><div class="avatar" id="avatar">FX</div><div><strong id="profileName">Fxhgjhh</strong><small id="profileTag">Diamond II Player</small></div></div>
+      <nav class="nav">
+        <div class="nav-title" id="navTitle">Player Menu</div>
+        <button class="active"><i>H</i>Home</button><button><i>P</i>My Profile</button><button><i>T</i>Tournaments</button><button><i>M</i>Match History</button><button><i>R</i>Rewards</button><button><i>S</i>Settings</button>
+      </nav>
+      <button class="logout">Logout</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><button class="menu" id="menuBtn">☰</button><div class="title" id="pageTitle">Player Dashboard</div><label class="search">Search <input placeholder="players, games, tournaments" /></label><div class="pill">LIVE</div><button class="icon-btn">N</button><button class="icon-btn">C</button><div class="avatar" style="width:38px;height:38px" id="topAvatar">FX</div></header>
+      <section class="content">
+        <div class="hero">
+          <div><h1 id="heroTitle">Welcome Back, <span>Fxhgjhh</span></h1><p id="heroText">Here's a live overview of your gaming performance.</p></div>
+          <div class="role-switch"><button class="active" data-role="player">Player</button><button data-role="team">Team</button><button data-role="admin">Admin</button></div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="grid">
+          <section class="card"><div class="card-head"><h2><span class="dot"></span><span id="leftTitle">Active Tournaments</span></h2><button>Browse All</button></div><div class="list" id="leftList"></div></section>
+          <section class="card"><div class="card-head"><h2><span class="dot"></span><span id="rightTitle">Recent Match History</span></h2><button>View All</button></div><div class="table-wrap"><table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div></section>
+        </div>
+
+        <section class="card"><div class="card-head"><h2><span class="dot"></span>Achievements</h2><button>View All</button></div><div class="achievements"><div class="achievement"><i>★</i><strong>Champion</strong></div><div class="achievement"><i>◆</i><strong>Diamond</strong></div><div class="achievement"><i>⚡</i><strong>Speed</strong></div><div class="achievement"><i>▲</i><strong>Clutch</strong></div><div class="achievement"><i>●</i><strong>Streak</strong></div><div class="achievement"><i>✓</i><strong>Defender</strong></div></div></section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const data = {
+      player: {
+        title: 'Player Dashboard', avatar: 'FX', name: 'Fxhgjhh', tag: 'Diamond II Player', hero: 'Welcome Back, <span>Fxhgjhh</span>', text: "Here's a live overview of your gaming performance.", menu: 'Player Menu',
+        stats: [['#142','Global Rank','T','-3'], ['72%','Win Rate','U','+8%'], ['1,248','Total Matches','S','+18'], ['$3,200','Prize Earnings','★','+$420']],
+        leftTitle: 'Active Tournaments', left: [['Valorant Champions Series','May 22 · 128/256','$10,000','OPEN'], ['CS2 Major Invitational','Jun 1 · 30/32','$25,000','FILLING'], ['Fortnite Friday Cup','Today · 240/256','$2,500','LIVE'], ['Apex Legends Open','Jun 8 · 64/128','$5,000','OPEN']],
+        rightTitle: 'Recent Match History', headers: ['Game','Map / Mode','KDA','Result','Time'], rows: [['Valorant','Ascent / Ranked 5v5','24/6/11','WIN','2h ago'], ['CS2','Dust II / Competitive','18/14/7','LOSS','5h ago'], ['Apex Legends','Storm Point / Ranked Trio','8/2/5','WIN','Yesterday'], ['League of Legends','SoloQ / Ranked','11/3/18','WIN','Yesterday']]
+      },
+      team: {
+        title: 'Team Dashboard', avatar: 'SB', name: 'StormBreakers', tag: 'Elite Team', hero: 'StormBreakers <span>Team Hub</span>', text: 'Roster, scrims, schedule, and competitive performance in one view.', menu: 'Team Menu',
+        stats: [['#38','Team Ranking','T','+5'], ['68%','Win Rate','U','+4%'], ['284','Matches Played','S','+12'], ['$8,400','Prize Earned','★','+$1.2k']],
+        leftTitle: 'Roster Management', left: [['Fxhgjhh','IGL / Fragger','Diamond II','ONLINE'], ['SkyKiller','Support','Diamond III','ONLINE'], ['ZeroRush','Entry Fragger','Platinum I','AWAY'], ['NightXero','Sniper','Diamond I','ONLINE']],
+        rightTitle: 'Match Schedule', headers: ['Opponent','Game','Date','Type','Status'], rows: [['NightRaiders','Valorant','May 20, 8:00 PM','Ranked Match','SOON'], ['EchoForce','CS2','May 22, 6:00 PM','Tournament','SOON'], ['BlazeFive','Apex','May 18, 9:00 PM','Scrim','WIN'], ['ShadowTeam','Valorant','May 17, 7:30 PM','Ranked','LOSS']]
+      },
+      admin: {
+        title: 'Admin Dashboard', avatar: 'AD', name: 'Admin User', tag: 'Administrator', hero: 'Admin <span>Control Panel</span>', text: 'System health, users, tournaments, revenue, and reports.', menu: 'Admin Menu',
+        stats: [['24,891','Total Users','U','+1,240'], ['1,342','Active Teams','T','+87'], ['$182,400','Total Revenue','$','+$22.1k'], ['8','Live Tournaments','L','+3']],
+        leftTitle: 'User Management', left: [['Fxhgjhh','fx@gaming.io','Player','ACTIVE'], ['StormBreakers','sb@gaming.io','Team','ACTIVE'], ['NightRaiders','nr@gaming.io','Team','SUSPENDED'], ['VortexGG','vx@gaming.io','Player','INACTIVE']],
+        rightTitle: 'System Activity Logs', headers: ['Type','Message','Time','Area','Status'], rows: [['Success','Tournament created','2 min ago','Events','OK'], ['Warning','Team suspended for ToS issue','15 min ago','Users','REVIEW'], ['Info','System backup completed','1h ago','Infra','OK'], ['Success','New team verified','2h ago','Teams','OK']]
+      }
+    };
+
+    const $ = id => document.getElementById(id);
+    const sidebar = $('sidebar');
+    $('menuBtn').onclick = () => sidebar.classList.toggle('open');
+    document.querySelectorAll('.nav button').forEach(btn => btn.onclick = () => { document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); sidebar.classList.remove('open'); });
+
+    function badgeClass(text) { return text === 'LIVE' || text === 'LOSS' || text === 'SUSPENDED' ? 'badge live' : text === 'FILLING' || text === 'SOON' || text === 'REVIEW' || text === 'INACTIVE' ? 'badge warn' : 'badge'; }
+    function render(role) {
+      const d = data[role];
+      $('pageTitle').textContent = d.title; $('avatar').textContent = d.avatar; $('topAvatar').textContent = d.avatar; $('profileName').textContent = d.name; $('profileTag').textContent = d.tag; $('heroTitle').innerHTML = d.hero; $('heroText').textContent = d.text; $('navTitle').textContent = d.menu; $('leftTitle').textContent = d.leftTitle; $('rightTitle').textContent = d.rightTitle;
+      $('stats').innerHTML = d.stats.map(s => `<article class="card stat"><div class="stat-top"><div class="stat-icon">${s[2]}</div><span class="change">${s[3]}</span></div><div><div class="stat-value">${s[0]}</div><div class="stat-label">${s[1]}</div></div></article>`).join('');
+      $('leftList').innerHTML = d.left.map((x, i) => `<div class="item"><div class="item-icon">${i + 1}</div><div><strong>${x[0]}</strong><small>${x[1]} · ${x[2]}</small></div><span class="${badgeClass(x[3])}">${x[3]}</span></div>`).join('');
+      $('tableHead').innerHTML = `<tr>${d.headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+      $('tableBody').innerHTML = d.rows.map(r => `<tr>${r.map((c, i) => i === r.length - 1 ? `<td><span class="${badgeClass(c)}">${c}</span></td>` : `<td>${c}</td>`).join('')}</tr>`).join('');
+      document.querySelectorAll('.role-switch button').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+    }
+    document.querySelectorAll('.role-switch button').forEach(btn => btn.onclick = () => render(btn.dataset.role));
+    render('player');
+  </script>
+</body>
+</html>
